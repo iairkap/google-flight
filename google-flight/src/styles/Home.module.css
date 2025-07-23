@@ -1,0 +1,14 @@
+.appContainer {
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  width: 100dvw;
+}
+
+.mainContent {
+  width: 100%;
+  max-width: 1024px;
+  padding: 0 16px;
+}
