@@ -1,26 +1,28 @@
 .wrapper {
   position: relative;
   width: 100%;
-  height: 320px;
+  min-height: 320px;
 }
 
 .background {
+  position: relative;
   background-image: url("https://www.gstatic.com/travel-frontend/animation/hero/flights_nc_4.svg");
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
   width: 1248px;
-  height: 22.5vw;
+  height: 16.5vw;
+  min-height: 200px;
   margin-left: -112px;
-  position: relative;
 }
 
 .title {
   position: absolute;
   left: 50%;
-  bottom: 20px;
-  font-weight: 500;
+  bottom: -20px;
+  font-weight: 450;
   transform: translate(-50%);
+  z-index: 2;
 }
 
 .content {
@@ -28,5 +30,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: 260px;
 }

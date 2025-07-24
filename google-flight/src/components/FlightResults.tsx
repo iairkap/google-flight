@@ -49,7 +49,7 @@ const FlightResults = () => {
     }
 
     return (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 4, px: { xs: 2, sm: 3, md: 4 } }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
                 Flight Results ({results.length} found)
             </Typography>

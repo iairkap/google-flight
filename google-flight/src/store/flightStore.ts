@@ -1,7 +1,11 @@
 // src/store/flightStore.ts
 import { create } from "zustand";
 import { Dayjs } from "dayjs";
-import { generateMockFlights } from "../utils/mockFlightData";
+import {
+  generateMockFlights,
+  getFavoriteDestinations,
+  locationToAirportMap,
+} from "../utils/mockFlightData";
 
 // Interfaces for API data structures
 interface MockDataResponse {
@@ -125,6 +129,7 @@ export interface FavoriteDestination {
   country: string;
   image: string;
   description: string;
+  coordinates: [number, number];
 }
 
 export interface UserLocation {
@@ -132,6 +137,7 @@ export interface UserLocation {
   country: string;
   countryCode: string;
   detected: boolean;
+  coordinates?: [number, number];
 }
 
 interface FlightStore {
@@ -142,6 +148,10 @@ interface FlightStore {
   // Configuration
   useMockData: boolean;
   setUseMockData: (value: boolean) => void;
+
+  // App initialization
+  isInitializing: boolean;
+  setIsInitializing: (value: boolean) => void;
 
   // Results
   results: FlightResult[];
@@ -183,58 +193,17 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   useMockData: true, // Default to mock data to save API calls
   setUseMockData: (value) => set({ useMockData: value }),
 
+  // App initialization
+  isInitializing: true, // Start with true to show loader initially
+  setIsInitializing: (value) => set({ isInitializing: value }),
+
   // Initial state
   results: [],
   isLoading: false,
   error: null,
 
-  // Favorite destinations - initialized with default destinations
-  favoriteDestinations: [
-    {
-      id: "london",
-      name: "London",
-      code: "LHR",
-      city: "London",
-      country: "United Kingdom",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/London_Montage_L.jpg/800px-London_Montage_L.jpg",
-      description:
-        "Historic city with iconic landmarks like Big Ben and the Tower Bridge",
-    },
-    {
-      id: "newyork",
-      name: "New York",
-      code: "JFK",
-      city: "New York",
-      country: "United States",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Manhattan_at_Dusk_by_slonecker.jpg/800px-Manhattan_at_Dusk_by_slonecker.jpg",
-      description:
-        "The city that never sleeps, famous for Times Square and Central Park",
-    },
-    {
-      id: "paris",
-      name: "Paris",
-      code: "CDG",
-      city: "Paris",
-      country: "France",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/800px-Tour_Eiffel_Wikimedia_Commons.jpg",
-      description:
-        "City of lights with the Eiffel Tower and world-class museums",
-    },
-    {
-      id: "singapore",
-      name: "Singapore",
-      code: "SIN",
-      city: "Singapore",
-      country: "Singapore",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Singapore_Panorama_v2.jpg/800px-Singapore_Panorama_v2.jpg",
-      description:
-        "Modern city-state known for its gardens, cuisine, and architecture",
-    },
-  ],
+  // Favorite destinations - obtenidos del mock data
+  favoriteDestinations: getFavoriteDestinations(),
   setFavoriteDestinations: (destinations) =>
     set({ favoriteDestinations: destinations }),
 
@@ -242,8 +211,60 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   userLocation: null,
   setUserLocation: (location) => set({ userLocation: location }),
   detectUserLocation: async () => {
+    console.log("🔍 Starting user location detection...");
+    set({ isInitializing: true }); // Set initializing state
+
     try {
-      // Try to get location using IP geolocation
+      // First try browser geolocation
+      if ("geolocation" in navigator) {
+        console.log("📍 Trying browser geolocation...");
+
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: false,
+              timeout: 10000,
+              maximumAge: 300000, // 5 minutes
+            });
+          }
+        );
+
+        console.log("🎯 Browser geolocation successful:", position.coords);
+
+        // Use reverse geocoding with coordinates
+        try {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          // Try using a free reverse geocoding service
+          const geocodeResponse = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+          );
+
+          if (geocodeResponse.ok) {
+            const geocodeData = await geocodeResponse.json();
+            const userLocation: UserLocation = {
+              city: geocodeData.city || geocodeData.locality || "Unknown",
+              country: geocodeData.countryName || "Unknown",
+              countryCode: geocodeData.countryCode || "XX",
+              detected: true,
+              coordinates: [lat, lon],
+            };
+            set({ userLocation });
+            console.log(
+              "🌍 Location detected via browser geolocation:",
+              userLocation
+            );
+            set({ isInitializing: false }); // Stop initialization
+            return;
+          }
+        } catch (geocodeError) {
+          console.warn("⚠️ Reverse geocoding failed:", geocodeError);
+        }
+      }
+
+      // Fallback to IP geolocation
+      console.log("🌐 Trying IP geolocation as fallback...");
       const response = await fetch("https://ipapi.co/json/");
       if (response.ok) {
         const data = await response.json();
@@ -252,22 +273,30 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
           country: data.country_name || "Unknown",
           countryCode: data.country_code || "XX",
           detected: true,
+          coordinates: [data.latitude, data.longitude],
         };
         set({ userLocation });
-        console.log("🌍 User location detected:", userLocation);
+        console.log("🌍 Location detected via IP geolocation:", userLocation);
+        set({ isInitializing: false }); // Stop initialization
       } else {
-        throw new Error("Failed to fetch location");
+        throw new Error("IP geolocation failed");
       }
     } catch (error) {
-      console.warn("⚠️ Could not detect user location:", error);
-      // Set default location
+      console.warn("⚠️ All location detection methods failed:", error);
+      // Set a more realistic default location
       const defaultLocation: UserLocation = {
-        city: "Unknown",
-        country: "Unknown",
-        countryCode: "XX",
+        city: "Buenos Aires", // More realistic default
+        country: "Argentina",
+        countryCode: "AR",
         detected: false,
+        coordinates: [-34.6118, -58.396], // Coordenadas de Buenos Aires
       };
       set({ userLocation: defaultLocation });
+      console.log("📍 Using default location:", defaultLocation);
+    } finally {
+      // Always set initializing to false when done
+      set({ isInitializing: false });
+      console.log("✅ Location detection completed - app ready to load");
     }
   },
 
@@ -432,23 +461,9 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   setError: (error) => set({ error }),
 }));
 
-// Helper function to map location names to airport codes
+// Helper function to map location names to airport codes (usa configuración centralizada)
 function mapLocationToAirportCode(location: string): string {
-  const locationMap: Record<string, string> = {
-    "Buenos Aires": "EZE",
-    "Eastern Europe": "MAD", // Default to Madrid
-    Madrid: "MAD",
-    Paris: "CDG",
-    London: "LHR",
-    "New York": "JFK",
-    Rome: "FCO",
-    Amsterdam: "AMS",
-    Frankfurt: "FRA",
-    Barcelona: "BCN",
-    Milan: "MXP",
-    Vienna: "VIE",
-  };
-  return locationMap[location] || "MAD"; // Default fallback
+  return locationToAirportMap[location] || "MAD"; // Default fallback
 }
 
 // Transform mock data to FlightResult format

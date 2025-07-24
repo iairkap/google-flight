@@ -18,7 +18,7 @@ const SearchBarBottom = () => {
     } = useFlightSearch();
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box sx={{ padding: 0 }}>
             <Box
                 sx={{
                     display: 'flex',

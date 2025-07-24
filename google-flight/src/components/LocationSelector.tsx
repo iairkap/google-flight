@@ -9,6 +9,8 @@ import {
     PlaceOutlined,
     SwapHorizOutlined
 } from '@mui/icons-material';
+import { textFieldStyles, buttonStyles } from '@/styles/common';
+import { COLORS } from '@/constants/styles';
 
 interface LocationSelectorProps {
     origin: string;
@@ -34,7 +36,6 @@ const LocationSelector = ({
                 flex: { xs: '1 1 100%', md: '0 0 auto' },
             }}
         >
-            {/* Origen */}
             <Box sx={{ flex: '1 1 300px', minWidth: 250 }}>
                 <TextField
                     fullWidth
@@ -45,32 +46,14 @@ const LocationSelector = ({
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <PlaceOutlined sx={{ color: '#666' }} />
+                                <PlaceOutlined sx={{ color: COLORS.text.light }} />
                             </InputAdornment>
                         ),
                     }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '4px',
-                            '& fieldset': {
-                                borderColor: '#ddd',
-                            },
-                            '&:hover fieldset': {
-                                borderColor: '#999',
-                            },
-                            '&.Mui-focused fieldset': {
-                                borderColor: '#666',
-                            },
-                        },
-                        '& .MuiInputBase-input': {
-                            color: '#333',
-                            fontWeight: 500,
-                        }
-                    }}
+                    sx={textFieldStyles}
                 />
             </Box>
 
-            {/* Destino */}
             <Box sx={{ flex: '1 1 300px', minWidth: 250 }}>
                 <TextField
                     fullWidth
@@ -81,32 +64,14 @@ const LocationSelector = ({
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <PlaceOutlined sx={{ color: '#666' }} />
+                                <PlaceOutlined sx={{ color: COLORS.text.light }} />
                             </InputAdornment>
                         ),
                     }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '4px',
-                            '& fieldset': {
-                                borderColor: '#ddd',
-                            },
-                            '&:hover fieldset': {
-                                borderColor: '#999',
-                            },
-                            '&.Mui-focused fieldset': {
-                                borderColor: '#666',
-                            },
-                        },
-                        '& .MuiInputBase-input': {
-                            color: '#333',
-                            fontWeight: 500,
-                        }
-                    }}
+                    sx={textFieldStyles}
                 />
             </Box>
 
-            {/* Botón de intercambio - posicionado en el centro del gap */}
             <IconButton
                 onClick={onSwapLocations}
                 sx={{
@@ -115,15 +80,13 @@ const LocationSelector = ({
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
                     backgroundColor: '#fff',
-                    border: '1px solid #ddd',
+                    border: '1px solid',
+                    borderColor: COLORS.border.light,
                     borderRadius: '50%',
                     width: 40,
                     height: 40,
                     zIndex: 10,
-                    '&:hover': {
-                        backgroundColor: '#f8f9fa',
-                        borderColor: '#999',
-                    },
+                    ...buttonStyles.secondary,
                     '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -137,7 +100,7 @@ const LocationSelector = ({
                     }
                 }}
             >
-                <SwapHorizOutlined sx={{ color: '#666', fontSize: 20 }} />
+                <SwapHorizOutlined sx={{ color: COLORS.text.light, fontSize: 20 }} />
             </IconButton>
         </Box>
     );

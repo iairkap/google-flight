@@ -1,4 +1,185 @@
 // src/utils/mockFlightData.ts
+// import { getCityImageFromUnsplash } from './unsplashApi'; // Para uso futuro
+
+// Cache para imágenes ya obtenidas de Unsplash (para uso futuro)
+// const imageCache: Record<string, string> = {};
+
+// Configuración central de destinos populares (siguiendo principio de Single Responsibility)
+export const popularDestinationsConfig = [
+  {
+    id: "london",
+    name: "London",
+    code: "LHR",
+    city: "London",
+    country: "United Kingdom",
+    description:
+      "Historic city with iconic landmarks like Big Ben and the Tower Bridge",
+    coordinates: [51.5074, -0.1278] as [number, number],
+  },
+  {
+    id: "newyork",
+    name: "New York",
+    code: "JFK",
+    city: "New York",
+    country: "United States",
+    description:
+      "The city that never sleeps, famous for Times Square and Central Park",
+    coordinates: [40.7128, -74.006] as [number, number],
+  },
+  {
+    id: "paris",
+    name: "Paris",
+    code: "CDG",
+    city: "Paris",
+    country: "France",
+    description: "City of lights with the Eiffel Tower and world-class museums",
+    coordinates: [48.8566, 2.3522] as [number, number],
+  },
+  {
+    id: "singapore",
+    name: "Singapore",
+    code: "SIN",
+    city: "Singapore",
+    country: "Singapore",
+    description:
+      "Modern city-state known for its gardens, cuisine, and architecture",
+    coordinates: [1.3521, 103.8198] as [number, number],
+  },
+  {
+    id: "madrid",
+    name: "Madrid",
+    code: "MAD",
+    city: "Madrid",
+    country: "Spain",
+    description: "Vibrant capital with world-class museums and beautiful parks",
+    coordinates: [40.4168, -3.7038] as [number, number],
+  },
+  {
+    id: "rome",
+    name: "Rome",
+    code: "FCO",
+    city: "Rome",
+    country: "Italy",
+    description:
+      "Eternal city with ancient history and magnificent architecture",
+    coordinates: [41.9028, 12.4964] as [number, number],
+  },
+  {
+    id: "amsterdam",
+    name: "Amsterdam",
+    code: "AMS",
+    city: "Amsterdam",
+    country: "Netherlands",
+    description: "Beautiful canals, world-class museums, and vibrant culture",
+    coordinates: [52.3676, 4.9041] as [number, number],
+  },
+  {
+    id: "frankfurt",
+    name: "Frankfurt",
+    code: "FRA",
+    city: "Frankfurt",
+    country: "Germany",
+    description: "Financial hub with modern skyline and rich cultural heritage",
+    coordinates: [50.1109, 8.6821] as [number, number],
+  },
+  {
+    id: "barcelona",
+    name: "Barcelona",
+    code: "BCN",
+    city: "Barcelona",
+    country: "Spain",
+    description:
+      "Stunning architecture, beautiful beaches, and vibrant nightlife",
+    coordinates: [41.3851, 2.1734] as [number, number],
+  },
+  {
+    id: "milan",
+    name: "Milan",
+    code: "MXP",
+    city: "Milan",
+    country: "Italy",
+    description: "Fashion capital with stunning Gothic cathedral and La Scala",
+    coordinates: [45.4642, 9.19] as [number, number],
+  },
+  {
+    id: "vienna",
+    name: "Vienna",
+    code: "VIE",
+    city: "Vienna",
+    country: "Austria",
+    description: "Imperial palaces, classical music, and elegant coffee houses",
+    coordinates: [48.2082, 16.3738] as [number, number],
+  },
+];
+
+// Configuración de destinos favoritos (mantenemos compatibilidad)
+export const favoriteDestinationsConfig = popularDestinationsConfig.slice(0, 4);
+
+// Función para obtener destinos favoritos con imágenes de Unsplash
+export const getFavoriteDestinations = () => {
+  return favoriteDestinationsConfig.map((destination) => ({
+    ...destination,
+    image: getCityImageSync(destination.code),
+  }));
+};
+
+// Función para obtener todos los destinos populares con imágenes
+export const getPopularDestinations = () => {
+  return popularDestinationsConfig.map((destination) => ({
+    ...destination,
+    image: getCityImageSync(destination.code),
+  }));
+};
+
+// Configuración central de aeropuertos y ciudades
+export const airportsConfig: Record<string, string> = {
+  EZE: "Ezeiza International Airport",
+  MAD: "Madrid-Barajas Airport",
+  CDG: "Charles de Gaulle Airport",
+  LHR: "Heathrow Airport",
+  JFK: "John F. Kennedy International Airport",
+  FCO: "Leonardo da Vinci Airport",
+  AMS: "Amsterdam Airport Schiphol",
+  FRA: "Frankfurt Airport",
+  BCN: "Barcelona-El Prat Airport",
+  MXP: "Milan Malpensa Airport",
+  VIE: "Vienna International Airport",
+  LGW: "London Gatwick Airport",
+  SIN: "Singapore Changi Airport",
+};
+
+export const citiesConfig: Record<string, string> = {
+  EZE: "Buenos Aires",
+  MAD: "Madrid",
+  CDG: "Paris",
+  LHR: "London",
+  JFK: "New York",
+  FCO: "Rome",
+  AMS: "Amsterdam",
+  FRA: "Frankfurt",
+  BCN: "Barcelona",
+  MXP: "Milan",
+  VIE: "Vienna",
+  LGW: "London",
+  SIN: "Singapore",
+};
+
+// Mapeo para el store (centralizado)
+export const locationToAirportMap: Record<string, string> = {
+  "Buenos Aires": "EZE",
+  "Eastern Europe": "MAD", // Default to Madrid
+  Madrid: "MAD",
+  Paris: "CDG",
+  London: "LHR",
+  "New York": "JFK",
+  Rome: "FCO",
+  Amsterdam: "AMS",
+  Frankfurt: "FRA",
+  Barcelona: "BCN",
+  Milan: "MXP",
+  Vienna: "VIE",
+};
+
 export const mockFlightResponse = {
   status: true,
   timestamp: 1691009267165,
@@ -190,8 +371,8 @@ export const generateMockFlights = (
       arrival: arrival,
       dayChange: 0,
       // Add destination image for UI display
-      destinationImage: getCityImage(destination),
-      originImage: getCityImage(origin),
+      destinationImage: getCityImageSync(destination),
+      originImage: getCityImageSync(origin),
     };
   });
 
@@ -221,86 +402,32 @@ export const generateMockFlights = (
 };
 
 function getAirportName(code: string): string {
-  const airports: Record<string, string> = {
-    EZE: "Ezeiza International Airport",
-    MAD: "Madrid-Barajas Airport",
-    CDG: "Charles de Gaulle Airport",
-    LHR: "Heathrow Airport",
-    JFK: "John F. Kennedy International Airport",
-    FCO: "Leonardo da Vinci Airport",
-    AMS: "Amsterdam Airport Schiphol",
-    FRA: "Frankfurt Airport",
-    BCN: "Barcelona-El Prat Airport",
-    MXP: "Milan Malpensa Airport",
-    VIE: "Vienna International Airport",
-    LGW: "London Gatwick Airport",
-    SIN: "Singapore Changi Airport",
-  };
-  return airports[code] || `${code} Airport`;
+  return airportsConfig[code] || `${code} Airport`;
 }
 
 function getCityName(code: string): string {
-  const cities: Record<string, string> = {
-    EZE: "Buenos Aires",
-    MAD: "Madrid",
-    CDG: "Paris",
-    LHR: "London",
-    JFK: "New York",
-    FCO: "Rome",
-    AMS: "Amsterdam",
-    FRA: "Frankfurt",
-    BCN: "Barcelona",
-    MXP: "Milan",
-    VIE: "Vienna",
-    LGW: "London",
-    SIN: "Singapore",
-  };
-  return cities[code] || code;
+  return citiesConfig[code] || code;
 }
 
-function getCityImage(code: string): string {
-  const cityImages: Record<string, string> = {
-    // Buenos Aires
-    EZE: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Buenos_Aires_Collage.png/800px-Buenos_Aires_Collage.png",
-
-    // Madrid
-    MAD: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Madrid_Skyline_from_Torre_Espacio_2.jpg/800px-Madrid_Skyline_from_Torre_Espacio_2.jpg",
-
-    // Paris
-    CDG: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/800px-Tour_Eiffel_Wikimedia_Commons.jpg",
-
-    // London
-    LHR: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/London_Montage_L.jpg/800px-London_Montage_L.jpg",
-
-    // New York
-    JFK: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Manhattan_at_Dusk_by_slonecker.jpg/800px-Manhattan_at_Dusk_by_slonecker.jpg",
-
-    // Rome
-    FCO: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Rome_Montage_2017.png/800px-Rome_Montage_2017.png",
-
-    // Amsterdam
-    AMS: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/KeizersgrachtReguliersgrachtAmsterdam.jpg/800px-KeizersgrachtReguliersgrachtAmsterdam.jpg",
-
-    // Frankfurt
-    FRA: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Frankfurt_skyline_2015.jpg/800px-Frankfurt_skyline_2015.jpg",
-
-    // Barcelona
-    BCN: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Skyline_Barcelona.jpg/800px-Skyline_Barcelona.jpg",
-
-    // Milan
-    MXP: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Piazza_del_Duomo_%28Milano%29.jpg/800px-Piazza_del_Duomo_%28Milano%29.jpg",
-
-    // Vienna
-    VIE: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Wien_-_Skyline_bei_Nacht.jpg/800px-Wien_-_Skyline_bei_Nacht.jpg",
-
-    // London Gatwick (usamos imagen de Londres)
-    LGW: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/London_Montage_L.jpg/800px-London_Montage_L.jpg",
-
-    // Singapore
-    SIN: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Singapore_Panorama_v2.jpg/800px-Singapore_Panorama_v2.jpg",
+function getCityImageSync(code: string): string {
+  const fallbackImages: Record<string, string> = {
+    EZE: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&auto=format&fit=crop&q=60", // Buenos Aires
+    MAD: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop&q=60", // Madrid
+    CDG: "https://images.unsplash.com/photo-1549144511-f099e773c147?w=800&auto=format&fit=crop&q=60", // Paris - Eiffel Tower
+    LHR: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&auto=format&fit=crop&q=60", // London
+    LGW: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&auto=format&fit=crop&q=60", // London
+    JFK: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&auto=format&fit=crop&q=60", // New York
+    FCO: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&auto=format&fit=crop&q=60", // Rome
+    AMS: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&auto=format&fit=crop&q=60", // Amsterdam
+    FRA: "https://images.unsplash.com/photo-1564981797816-1043664bf78d?w=800&auto=format&fit=crop&q=60", // Frankfurt
+    BCN: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop&q=60", // Barcelona
+    MXP: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&auto=format&fit=crop&q=60", // Milan
+    VIE: "https://images.unsplash.com/photo-1516550893923-42d954725656?w=800&auto=format&fit=crop&q=60", // Vienna
+    SIN: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&auto=format&fit=crop&q=60", // Singapore
   };
+
   return (
-    cityImages[code] ||
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Airplane_silhouette.svg/800px-Airplane_silhouette.svg.png"
-  ); // Default travel image
+    fallbackImages[code] ||
+    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&auto=format&fit=crop&q=60"
+  );
 }

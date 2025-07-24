@@ -1,22 +1,29 @@
-// src/components/HeroSection.tsx
 import React from 'react';
-import styles from '@/styles/HeroSection.module.css';
+import { Box } from '@mui/material';
+import type { HeroSectionProps } from '@/types/heroSection.types';
+import { HeroBackground, HeroContent } from './HeroSection/index';
+import { heroSectionWrapperStyles } from '@/styles/heroSection.styles';
 
-interface Props {
-    children: React.ReactNode;
-}
-
-const HeroSection: React.FC<Props> = ({ children }) => {
-    return (
-        <div className={styles.wrapper}>
-            <div className={styles.background}>
-                <h1 className={styles.title}>Flights</h1>
-            </div>
-            <div className={styles.content}>
-                {children}
-            </div>
-        </div>
-    );
+const HeroSection: React.FC<HeroSectionProps> = ({
+  children,
+  title = 'Flights',
+  backgroundImageUrl,
+  className
+}) => {
+  return (
+    <Box
+      sx={heroSectionWrapperStyles}
+      className={className}
+    >
+      <HeroBackground
+        title={title}
+        backgroundImageUrl={backgroundImageUrl}
+      />
+      <HeroContent>
+        {children}
+      </HeroContent>
+    </Box>
+  );
 };
 
 export default HeroSection;
