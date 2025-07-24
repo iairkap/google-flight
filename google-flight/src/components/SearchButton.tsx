@@ -1,49 +1,44 @@
-// src/components/SearchButton.tsx
+import React from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useFlightStore } from '@/store/flightStore';
+import { searchButtonStyles } from '@/styles/searchButton.styles';
+import type { SearchButtonProps } from '@/types/searchButton.types';
 
-const SearchButton = () => {
-    const { searchFlights, isLoading } = useFlightStore();
+const SearchButton: React.FC<SearchButtonProps> = ({
+  text = "Explore",
+  loadingText = "Searching...",
+  onClick,
+  isLoading: externalLoading,
+  disabled: externalDisabled,
+  className
+}) => {
+  const { searchFlights, isLoading: storeLoading } = useFlightStore();
+  
+  const isLoading = externalLoading ?? storeLoading;
+  const isDisabled = externalDisabled ?? isLoading;
 
-    const handleSearch = () => {
-        searchFlights();
-    };
+  const handleSearch = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      searchFlights();
+    }
+  };
 
-    return (
-        <Button
-            variant="contained"
-            size="large"
-            onClick={handleSearch}
-            disabled={isLoading}
-            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Search />}
-            sx={{
-                position: 'absolute',
-                left: '50%',
-                bottom: '-25px', // Mitad afuera del container
-                transform: 'translateX(-50%)',
-                zIndex: 10,
-                height: '40px',
-                backgroundColor: '#1a73e8',
-                borderRadius: '25px',
-                fontFamily: '"Google Sans", Roboto, Arial, sans-serif',
-                fontSize: '.875rem',
-                letterSpacing: '.0107142857em',
-                fontWeight: 500,
-                textTransform: 'none',
-                '&:hover': {
-                    backgroundColor: '#1565c0',
-                    boxShadow: '0 6px 16px rgba(25, 118, 210, 0.5)',
-                },
-                '&:disabled': {
-                    backgroundColor: '#ccc',
-                    color: '#666',
-                },
-            }}
-        >
-            {isLoading ? 'Explore' : 'Explore'}
-        </Button>
-    );
+  return (
+    <Button
+      variant="contained"
+      size="large"
+      onClick={handleSearch}
+      disabled={isDisabled}
+      startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Search />}
+      sx={searchButtonStyles}
+      className={className}
+    >
+      {isLoading ? loadingText : text}
+    </Button>
+  );
 };
 
 export default SearchButton;
