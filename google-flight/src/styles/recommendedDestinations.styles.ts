@@ -5,8 +5,9 @@ import { COLORS } from "@/constants/styles";
 export const recommendedDestinationsContainerStyles: SxProps<Theme> = {
   mt: 1,
   mb: 4,
-  width: "calc(100% - 32px)",
-  padding: "0 16px",
+  width: "100%",
+  maxWidth: { xs: "100%", sm: "768px", lg: "1024px" },
+  mx: "auto",
 };
 
 // No Results Message Styles

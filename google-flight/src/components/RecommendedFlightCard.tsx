@@ -27,7 +27,12 @@ const RecommendedFlightCard = ({ flight, onClick }: RecommendedFlightCardProps) 
                 borderRadius: 2,
                 overflow: 'hidden',
                 boxShadow: 'none',
-                width: "100%"
+                width: "100%",
+                '@media (max-width: 768px)': {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    height: 'auto'
+                }
             }}
         >
             <CardMedia
@@ -39,10 +44,26 @@ const RecommendedFlightCard = ({ flight, onClick }: RecommendedFlightCardProps) 
                     objectFit: 'cover',
                     borderRadius: '16px',
                     margin: '8px 8px 0 8px',
-                    width: 'calc(100% - 16px)'
+                    width: 'calc(100% - 16px)',
+                    '@media (max-width: 768px)': {
+                        width: '40%',
+                        height: '120px',
+                        margin: '8px',
+                        flexShrink: 0
+                    }
                 }}
             />
-            <CardContent sx={{ p: 2, paddingTop: '16px' }}>
+            <CardContent sx={{
+                p: 2,
+                paddingTop: '16px',
+                '@media (max-width: 768px)': {
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    padding: '16px 16px 16px 0'
+                }
+            }}>
                 {/* Primera fila: Destino y Precio */}
                 <Box
                     sx={{

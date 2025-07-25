@@ -12,3 +12,23 @@
   max-width: 1024px;
   padding: 0;
 }
+
+/* Tablet breakpoint (768px - 1024px) - Max width 768px y ajustar padding */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .mainContent {
+    max-width: 768px;
+    padding: 0 16px;
+  }
+}
+
+/* Mobile breakpoint (menos de 768px) - Layout adaptado */
+@media (max-width: 767px) {
+  .mainContent {
+    padding: 0 12px;
+    max-width: 768px;
+  }
+
+  .appContainer {
+    width: 100vw;
+  }
+}

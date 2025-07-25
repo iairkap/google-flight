@@ -5,20 +5,19 @@ import { GOOGLE_FONTS, TYPOGRAPHY } from "@/constants/styles";
 export const heroSectionWrapperStyles: SxProps<Theme> = {
   position: "relative",
   width: "100%",
-  minHeight: "320px",
+  minHeight: { xs: "280px", sm: "320px", md: "320px" },
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  overflow: "hidden",
 };
 
 // Hero Section Background Styles
 export const heroSectionBackgroundStyles: SxProps<Theme> = {
   position: "relative",
   width: "100%",
-  height: "16.5vw",
-  minHeight: "200px",
+  height: { xs: "120px", sm: "14vw", md: "16.5vw" },
+  minHeight: { xs: "120px", sm: "180px", md: "200px" },
   backgroundColor: "white",
   display: "flex",
   alignItems: "center",
@@ -31,7 +30,7 @@ export const heroSectionBackgroundImageStyles: SxProps<Theme> = {
   top: 0,
   left: "50%",
   transform: "translateX(-50%)",
-  width: "1248px",
+  width: { xs: "600px", sm: "800px", md: "1248px" },
   height: "100%",
   backgroundSize: "contain",
   backgroundPosition: "center",
@@ -58,11 +57,11 @@ export const heroSectionContentStyles: SxProps<Theme> = {
   position: "relative",
   zIndex: 2,
   width: "100%",
-  maxWidth: "1200px",
-  px: { xs: 2, sm: 3, md: 4 },
-  mt: { xs: 4, sm: 6, md: 8 },
+  maxWidth: { xs: "100%", sm: "768px", lg: "1200px" },
+  px: { xs: 1, sm: 2, md: 4 },
+  mt: { xs: 3, sm: 4, md: 6, lg: 8 },
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  minHeight: "260px",
+  minHeight: { xs: "200px", sm: "240px", md: "260px" },
 };

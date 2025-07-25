@@ -1,16 +1,11 @@
 // src/components/LocationSelector.tsx
-import {
-    Box,
-    TextField,
-    InputAdornment,
-    IconButton,
-} from '@mui/material';
-import {
-    PlaceOutlined,
-    SwapHorizOutlined
-} from '@mui/icons-material';
-import { textFieldStyles, buttonStyles } from '@/styles/common';
-import { COLORS } from '@/constants/styles';
+import React, { useRef } from 'react';
+import { Box } from '@mui/material';
+import LocationField from './LocationSelector/LocationField';
+import SwapButton from './LocationSelector/SwapButton';
+import LocationPopup from './LocationSelector/LocationPopup';
+import { useLocationSelector } from '@/hooks/useLocationSelector';
+import { locationSelectorContainerStyles } from '@/styles/LocationSelector';
 
 interface LocationSelectorProps {
     origin: string;
@@ -20,88 +15,85 @@ interface LocationSelectorProps {
     onSwapLocations: () => void;
 }
 
-const LocationSelector = ({
+const LocationSelector: React.FC<LocationSelectorProps> = ({
     origin,
     destination,
     onOriginChange,
     onDestinationChange,
-    onSwapLocations
-}: LocationSelectorProps) => {
+    onSwapLocations,
+}) => {
+    const { state, actions } = useLocationSelector();
+    const originFieldRef = useRef<HTMLDivElement>(null);
+    const destinationFieldRef = useRef<HTMLDivElement>(null);
+
+    const handleOriginClick = () => {
+        actions.openOriginPopup();
+    };
+
+    const handleDestinationClick = () => {
+        actions.openDestinationPopup();
+    };
+
+    const handleOriginSelect = (location: string) => {
+        onOriginChange(location);
+        actions.closePopups();
+    };
+
+    const handleDestinationSelect = (location: string) => {
+        onDestinationChange(location);
+        actions.closePopups();
+    };
+
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                position: 'relative',
-                gap: '8px',
-                flex: { xs: '1 1 100%', md: '0 0 auto' },
-            }}
-        >
-            <Box sx={{ flex: '1 1 300px', minWidth: 250 }}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Where from?"
+        <Box sx={locationSelectorContainerStyles}>
+            {/* Origin Field */}
+            <Box ref={originFieldRef} sx={{ position: 'relative', flex: 1, }}>
+                <LocationField
+                    type="origin"
                     value={origin}
-                    onChange={(e) => onOriginChange(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <PlaceOutlined sx={{ color: COLORS.text.light }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={textFieldStyles}
+                    placeholder="Where from?"
+                    onClick={handleOriginClick}
+                />
+
+                <LocationPopup
+                    isOpen={state.isOriginPopupOpen}
+                    placeholder="Where from?"
+                    query={state.originQuery}
+                    suggestions={state.suggestions}
+                    isLoading={state.isLoading}
+                    onQueryChange={actions.setOriginQuery}
+                    onLocationSelect={handleOriginSelect}
+                    onClose={actions.closePopups}
+                    anchorElement={originFieldRef.current}
                 />
             </Box>
 
-            <Box sx={{ flex: '1 1 300px', minWidth: 250 }}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Where to?"
+            {/* Swap Button Container */}
+            <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', zIndex: 100 }}>
+                <SwapButton onClick={onSwapLocations} />
+            </Box>
+
+            {/* Destination Field */}
+            <Box ref={destinationFieldRef} sx={{ position: 'relative', flex: 1 }}>
+                <LocationField
+                    type="destination"
                     value={destination}
-                    onChange={(e) => onDestinationChange(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <PlaceOutlined sx={{ color: COLORS.text.light }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={textFieldStyles}
+                    placeholder="Where to?"
+                    onClick={handleDestinationClick}
+                />
+
+                <LocationPopup
+                    isOpen={state.isDestinationPopupOpen}
+                    placeholder="Where to?"
+                    query={state.destinationQuery}
+                    suggestions={state.suggestions}
+                    isLoading={state.isLoading}
+                    onQueryChange={actions.setDestinationQuery}
+                    onLocationSelect={handleDestinationSelect}
+                    onClose={actions.closePopups}
+                    anchorElement={destinationFieldRef.current}
                 />
             </Box>
-
-            <IconButton
-                onClick={onSwapLocations}
-                sx={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: '#fff',
-                    border: '1px solid',
-                    borderColor: COLORS.border.light,
-                    borderRadius: '50%',
-                    width: 40,
-                    height: 40,
-                    zIndex: 10,
-                    ...buttonStyles.secondary,
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: '-4px',
-                        bottom: '-4px',
-                        left: '50%',
-                        width: '8px',
-                        backgroundColor: '#fff',
-                        transform: 'translateX(-50%)',
-                        zIndex: -1,
-                    }
-                }}
-            >
-                <SwapHorizOutlined sx={{ color: COLORS.text.light, fontSize: 20 }} />
-            </IconButton>
         </Box>
     );
 };

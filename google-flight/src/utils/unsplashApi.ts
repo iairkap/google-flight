@@ -62,7 +62,6 @@ export const searchUnsplashPhotos = async (
       results: filteredResults,
     };
   } catch (error) {
-    console.error("Error fetching from Unsplash:", error);
     throw error;
   }
 };
@@ -90,8 +89,7 @@ export const getCityImageFromUnsplash = async (
     }
 
     return null;
-  } catch (error) {
-    console.error(`Error getting image for ${cityName}:`, error);
+  } catch {
     return null;
   }
 };

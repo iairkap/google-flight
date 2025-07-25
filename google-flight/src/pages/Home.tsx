@@ -1,5 +1,4 @@
 import SearchBar from '@/components/SearchBar';
-import FlightResults from '@/components/FlightResults';
 import styles from '@/styles/Home.module.css';
 import HeroSection from '@/components/HeroSection';
 import { Container } from '@mui/material';
@@ -22,13 +21,17 @@ function Home() {
                         flexDirection: 'column',
                         gap: 4,
                         alignItems: 'center',
-                        padding: '0 !important',
+                        padding: { xs: '0 12px', sm: '0 16px', lg: '0' },
                         margin: 0,
-                        width: '100%'
+                        width: '100%',
+                        maxWidth: { xs: '100%', sm: '768px', lg: '1024px' },
+                        mx: 'auto',
+                        '@media (max-width: 768px)': {
+                            marginTop: '3rem'
+                        }
                     }}
                 >
                     <ExploreDestinationsSection />
-                    <FlightResults />
                 </Container>
                 <HelpSection />
                 <PopularDestinations />

@@ -3,7 +3,7 @@ import UsefulToolsSection from './UsefulToolsSection';
 import type { HelpSectionProps } from '@/types/helpSection.types';
 
 const HelpSection: React.FC<HelpSectionProps> = () => {
-  return <UsefulToolsSection />;
+    return <UsefulToolsSection />;
 };
 
 export default HelpSection;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import RecommendedFlightCard from '../RecommendedFlightCard';
 import type { RecommendedFlight } from '@/hooks/useRecommendedFlights';
 
@@ -12,7 +13,17 @@ export const RecommendedDestinationsGrid: React.FC<RecommendedDestinationsGridPr
     onFlightClick
 }) => {
     return (
-        <div className="recommended-grid" style={{ display: "flex", width: "100%", gap: "16px" }}>
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '16px',
+                width: '100%',
+                '@media (max-width: 768px)': {
+                    gridTemplateColumns: '1fr'
+                }
+            }}
+        >
             {flights.map((flight, index) => (
                 <RecommendedFlightCard
                     key={index}
@@ -20,6 +31,6 @@ export const RecommendedDestinationsGrid: React.FC<RecommendedDestinationsGridPr
                     onClick={() => onFlightClick?.(flight)}
                 />
             ))}
-        </div>
+        </Box>
     );
 };

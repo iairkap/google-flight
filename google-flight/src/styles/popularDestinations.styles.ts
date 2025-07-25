@@ -4,6 +4,8 @@ import { COLORS, GOOGLE_FONTS, TYPOGRAPHY } from "@/constants/styles";
 // Popular Destinations Container Styles
 export const popularDestinationsContainerStyles: SxProps<Theme> = {
   width: "100%",
+  maxWidth: { xs: "100%", sm: "768px", lg: "1024px" },
+  mx: "auto",
   py: 6,
   px: { xs: 2, sm: 3, md: 4 },
 };
@@ -39,8 +41,8 @@ export const popularDestinationsScrollAreaStyles: SxProps<Theme> = {
 
 // Popular Destinations Card Styles
 export const popularDestinationsCardStyles: SxProps<Theme> = {
-  minWidth: "200px",
-  height: "140px",
+  minWidth: "132px  ",
+  height: "100px",
   borderRadius: 2,
   overflow: "hidden",
   position: "relative",

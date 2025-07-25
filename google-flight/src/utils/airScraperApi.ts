@@ -1,5 +1,5 @@
 // src/utils/airScraperApi.ts
-import { mockFlightResponse, generateMockFlights } from './mockFlightData';
+import { mockFlightResponse, generateMockFlights } from "./mockFlightData";
 
 export interface AirScraperSearchParams {
   originSkyId: string;
@@ -82,30 +82,23 @@ export interface AirScraperResponse {
 }
 
 // HARDCODED IMPLEMENTATION - Uses mock data to preserve API request limits
-export const searchFlights = async (params: AirScraperSearchParams): Promise<AirScraperResponse> => {
-  console.log('🚀 [AirScraper] Using hardcoded data to preserve API limits');
-  console.log('🎯 [AirScraper] Search parameters:', {
-    origin: params.originSkyId,
-    destination: params.destinationSkyId, 
-    date: params.date,
-    adults: params.adults,
-    cabinClass: params.cabinClass
-  });
-
+export const searchFlights = async (
+  params: AirScraperSearchParams
+): Promise<AirScraperResponse> => {
   // Simulate API delay for realistic UX
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+  await new Promise((resolve) =>
+    setTimeout(resolve, 1000 + Math.random() * 1000)
+  );
 
   // Use the provided hardcoded response or generate dynamic flights
   const useProvidedData = Math.random() > 0.5; // 50% chance to use your provided data
-  
+
   if (useProvidedData) {
-    console.log('✅ [AirScraper] Returning provided hardcoded flight data');
     return mockFlightResponse as AirScraperResponse;
   } else {
-    console.log('✅ [AirScraper] Generating dynamic mock flight data');
     return generateMockFlights(
-      params.originSkyId, 
-      params.destinationSkyId, 
+      params.originSkyId,
+      params.destinationSkyId,
       params.date
     ) as AirScraperResponse;
   }

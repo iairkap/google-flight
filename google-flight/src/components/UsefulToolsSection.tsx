@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, Fade } from '@mui/material';
+import { Box, Typography, Fade } from '@mui/material';
 import { CalendarMonth, TrendingUp, NotificationsActive } from '@mui/icons-material';
 import { useState } from 'react';
 import ToolCard from './ToolCard';
@@ -44,8 +44,14 @@ const UsefulToolsSection: React.FC = () => {
     ];
 
     return (
-        <Box sx={{ width: "100%", padding: 0, margin: 0 }}>
-            <Box sx={{ mb: 2, px: { xs: 2, sm: 3, md: 4 } }}>
+        <Box sx={{
+            width: "100%",
+            maxWidth: '1024px',
+            mx: 'auto',
+            padding: 0,
+            margin: 0
+        }}>
+            <Box sx={{ mb: 2, px: 4 }}>
                 <Typography
                     variant="h4"
                     sx={{
@@ -61,8 +67,23 @@ const UsefulToolsSection: React.FC = () => {
                 </Typography>
             </Box>
 
-            <Grid container spacing={6} sx={{ height: '60dvh', px: { xs: 2, sm: 3, md: 4 } }}>
-                <Grid size={{ xs: 12, lg: 4.8 }}>
+            <Box sx={{
+                display: 'flex',
+                gap: 6,
+                height: '60dvh',
+                px: 4,
+                '@media (max-width: 768px)': {
+                    flexDirection: 'row',
+                    gap: 3,
+                    height: '100%'
+                }
+            }}>
+                <Box sx={{
+                    width: '40%',
+                    '@media (max-width: 768px)': {
+                        width: '50%'
+                    }
+                }}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -83,13 +104,18 @@ const UsefulToolsSection: React.FC = () => {
                             </Box>
                         ))}
                     </Box>
-                </Grid>
+                </Box>
 
                 {/* Right Column - Dynamic Content */}
-                <Grid size={{ xs: 12, lg: 7.2 }}>
+                <Box sx={{
+                    width: '60%',
+                    '@media (max-width: 768px)': {
+                        width: '50%'
+                    }
+                }}>
                     <Box
                         sx={{
-                            pl: { lg: 4 },
+                            pl: 4,
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 2
@@ -155,8 +181,8 @@ const UsefulToolsSection: React.FC = () => {
                             </Box>
                         </Fade>
                     </Box>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
         </Box>
     );
 }; export default UsefulToolsSection;

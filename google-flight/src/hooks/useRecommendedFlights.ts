@@ -24,8 +24,6 @@ export const useRecommendedFlights = (
 
   useEffect(() => {
     if (userLocation && favoriteDestinations.length > 0) {
-      console.log("🏨 Generating recommended flights for:", userLocation.city);
-
       // Generate recommended flights based on user location
       const flights = favoriteDestinations
         .slice(0, 4)
@@ -73,7 +71,6 @@ export const useRecommendedFlights = (
         });
 
       setRecommendedFlights(flights);
-      console.log("✈️ Generated recommended flights:", flights);
     } else {
       setRecommendedFlights([]);
     }

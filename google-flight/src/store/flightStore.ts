@@ -211,14 +211,11 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   userLocation: null,
   setUserLocation: (location) => set({ userLocation: location }),
   detectUserLocation: async () => {
-    console.log("🔍 Starting user location detection...");
     set({ isInitializing: true }); // Set initializing state
 
     try {
       // First try browser geolocation
       if ("geolocation" in navigator) {
-        console.log("📍 Trying browser geolocation...");
-
         const position = await new Promise<GeolocationPosition>(
           (resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -228,8 +225,6 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
             });
           }
         );
-
-        console.log("🎯 Browser geolocation successful:", position.coords);
 
         // Use reverse geocoding with coordinates
         try {
@@ -251,20 +246,15 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
               coordinates: [lat, lon],
             };
             set({ userLocation });
-            console.log(
-              "🌍 Location detected via browser geolocation:",
-              userLocation
-            );
             set({ isInitializing: false }); // Stop initialization
             return;
           }
-        } catch (geocodeError) {
-          console.warn("⚠️ Reverse geocoding failed:", geocodeError);
+        } catch {
+          // Silently handle reverse geocoding errors
         }
       }
 
       // Fallback to IP geolocation
-      console.log("🌐 Trying IP geolocation as fallback...");
       const response = await fetch("https://ipapi.co/json/");
       if (response.ok) {
         const data = await response.json();
@@ -276,13 +266,11 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
           coordinates: [data.latitude, data.longitude],
         };
         set({ userLocation });
-        console.log("🌍 Location detected via IP geolocation:", userLocation);
         set({ isInitializing: false }); // Stop initialization
       } else {
         throw new Error("IP geolocation failed");
       }
-    } catch (error) {
-      console.warn("⚠️ All location detection methods failed:", error);
+    } catch {
       // Set a more realistic default location
       const defaultLocation: UserLocation = {
         city: "Buenos Aires", // More realistic default
@@ -292,11 +280,9 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
         coordinates: [-34.6118, -58.396], // Coordenadas de Buenos Aires
       };
       set({ userLocation: defaultLocation });
-      console.log("📍 Using default location:", defaultLocation);
     } finally {
       // Always set initializing to false when done
       set({ isInitializing: false });
-      console.log("✅ Location detection completed - app ready to load");
     }
   },
 
@@ -304,9 +290,6 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   updateSearchData: (data) =>
     set((state) => {
       const newSearchData = { ...state.searchData, ...data };
-      console.log("🔄 Store Update - updateSearchData called with:", data);
-      console.log("📊 Store Update - Previous searchData:", state.searchData);
-      console.log("📊 Store Update - New searchData:", newSearchData);
       return {
         searchData: newSearchData,
       };
@@ -316,22 +299,16 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   searchFlights: async () => {
     const { searchData, useMockData } = get();
 
-    console.log("🚀 SEARCH BUTTON CLICKED!");
-    console.log("📋 Current searchData in store:", searchData);
-    console.log("⚙️ Using mock data:", useMockData);
-
     // Validation
     if (
       !searchData.origin ||
       !searchData.destination ||
       !searchData.departureDate
     ) {
-      console.log("❌ Validation failed - missing required fields");
       set({ error: "Please fill in all required fields" });
       return;
     }
 
-    console.log("✅ Validation passed - proceeding with search");
     set({ isLoading: true, error: null });
 
     try {
@@ -339,7 +316,6 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
 
       if (useMockData) {
         // Use mock data
-        console.log("📦 Using mock data for flight search");
 
         const departureFormatted =
           searchData.departureDate.format("YYYY-MM-DD");
@@ -350,21 +326,11 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
           searchData.destination
         );
 
-        console.log("🗺️ Mapped locations:");
-        console.log("   - Origin:", searchData.origin, "->", originCode);
-        console.log(
-          "   - Destination:",
-          searchData.destination,
-          "->",
-          destinationCode
-        );
-
         const mockData = generateMockFlights(
           originCode,
           destinationCode,
           departureFormatted
         );
-        console.log("📊 Generated mock data:", mockData);
 
         // Transform mock data to our format
         transformedResults = transformMockDataToFlightResults(
@@ -373,7 +339,6 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
         );
       } else {
         // Use real API
-        console.log("🌐 Using real API for flight search");
 
         const departureFormatted =
           searchData.departureDate.format("YYYY-MM-DD");
@@ -411,7 +376,6 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
         });
 
         const url = `${baseUrl}?${params.toString()}`;
-        console.log("📤 API Request URL:", url);
 
         const response = await fetch(url, {
           method: "GET",
@@ -421,16 +385,12 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
           },
         });
 
-        console.log("📥 API Response Status:", response.status);
-
         if (!response.ok) {
           const errorText = await response.text();
-          console.log("❌ API Error Response:", errorText);
           throw new Error(`API Error: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log("📦 Full API Response:", data);
 
         // Transform API response to our format
         transformedResults = transformApiDataToFlightResults(
@@ -439,13 +399,8 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
         );
       }
 
-      console.log("🔄 Transformed Results:", transformedResults);
-      console.log("📈 Results Count:", transformedResults.length);
-
       set({ results: transformedResults, isLoading: false });
-      console.log("✅ Store updated with results successfully!");
     } catch (error) {
-      console.error("❌ Flight search error:", error);
       set({
         error:
           error instanceof Error ? error.message : "Failed to search flights",
@@ -472,7 +427,6 @@ function transformMockDataToFlightResults(
   departureDate: string
 ): FlightResult[] {
   if (!mockData?.data?.itinerary?.legs) {
-    console.warn("⚠️ Invalid mock data structure");
     return [];
   }
 
@@ -512,7 +466,6 @@ function transformApiDataToFlightResults(
   departureDate: string
 ): FlightResult[] {
   if (!apiData?.data?.itineraries) {
-    console.warn("⚠️ Invalid API data structure");
     return [];
   }
 

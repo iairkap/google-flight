@@ -82,12 +82,12 @@ const DateSelector = ({
                 sx={{
                     display: 'flex',
                     flex: { xs: '1 1 100%', md: '1 1 auto' },
-                    minWidth: 350,
+                    minWidth: {},
                     ml: { md: 2 },
                     border: '1px solid #ddd',
                     borderRadius: '4px',
-                    backgroundColor: '#fff',
                     overflow: 'hidden',
+                    width: {},
                     '&:hover': {
                         borderColor: '#999',
                     },
@@ -99,7 +99,7 @@ const DateSelector = ({
                 {/* Fecha de salida */}
                 <Box sx={{
                     flex: '1 1 auto',
-                    minWidth: 150,
+                    minWidth: { xs: '120px', sm: 140, md: 150 },
                     position: 'relative',
                     '&::after': {
                         content: '""',
@@ -162,9 +162,9 @@ const DateSelector = ({
                         }}
                         sx={{
                             '& .MuiInputBase-root': {
-                                padding: '14px 16px',
+                                padding: { xs: '12px 14px', sm: '14px 16px' },
                                 cursor: 'pointer',
-                                height: '56px',
+                                height: { xs: '48px', sm: '56px' },
                                 boxSizing: 'border-box',
                                 backgroundColor: activeField === 'departure' ? '#e3f2fd' : 'transparent',
                             },
@@ -172,6 +172,7 @@ const DateSelector = ({
                                 color: '#333',
                                 fontWeight: 500,
                                 cursor: 'pointer',
+                                fontSize: { xs: '14px', sm: '16px' },
                                 '&::placeholder': {
                                     color: '#666',
                                     opacity: 1,
@@ -186,7 +187,7 @@ const DateSelector = ({
                 {/* Fecha de regreso */}
                 <Box sx={{
                     flex: '1 1 auto',
-                    minWidth: 150
+                    minWidth: { xs: '120px', sm: 140, md: 150 }
                 }}>
                     <TextField
                         fullWidth
@@ -233,9 +234,9 @@ const DateSelector = ({
                         }}
                         sx={{
                             '& .MuiInputBase-root': {
-                                padding: '14px 16px',
+                                padding: { xs: '12px 14px', sm: '14px 16px' },
                                 cursor: 'pointer',
-                                height: '56px',
+                                height: { xs: '48px', sm: '56px' },
                                 boxSizing: 'border-box',
                                 backgroundColor: activeField === 'return' ? '#e3f2fd' : 'transparent',
                             },
@@ -243,6 +244,7 @@ const DateSelector = ({
                                 color: '#333',
                                 fontWeight: 500,
                                 cursor: 'pointer',
+                                fontSize: { xs: '14px', sm: '16px' },
                                 '&::placeholder': {
                                     color: '#666',
                                     opacity: 1,
