@@ -384,15 +384,56 @@ export const flightCardStyles: SxProps<Theme> = {
 
 #### 5. Responsive Design Implementation
 
+**Custom Media Queries Strategy**:
+
+The application implements a custom responsive design approach using CSS media queries instead of Material-UI's breakpoint system for more precise control at the 768px breakpoint:
+
 ```typescript
-// Responsive grid system
+// Custom media queries at 768px breakpoint
 sx={{
-  gridTemplateColumns: {
-    xs: '1fr',                    // Mobile: single column
-    sm: 'repeat(2, 1fr)',        // Tablet: two columns
-    md: 'repeat(4, 1fr)'         // Desktop: four columns
-  },
-  gap: { xs: 2, sm: 3, md: 4 }   // Responsive spacing
+  display: 'grid',
+  gridTemplateColumns: 'repeat(4, 1fr)', // Desktop: four columns
+  gap: '16px',
+  '@media (max-width: 768px)': {
+    gridTemplateColumns: '1fr'           // Mobile: single column
+  }
+}}
+```
+
+**Mobile-First Responsive Components**:
+
+```typescript
+// RecommendedFlightCard - Horizontal layout for mobile
+sx={{
+  height: '100%',
+  cursor: 'pointer',
+  '@media (max-width: 768px)': {
+    display: 'flex',
+    flexDirection: 'row',      // Horizontal card layout
+    height: 'auto'
+  }
+}}
+
+// Image sizing with responsive width
+sx={{
+  width: 'calc(100% - 16px)',
+  '@media (max-width: 768px)': {
+    width: '40%',              // 40% width for mobile
+    height: '120px',
+    flexShrink: 0
+  }
+}}
+```
+
+**Container Responsive Behavior**:
+
+```typescript
+// Home page container with mobile spacing
+sx={{
+  maxWidth: { xs: '100%', sm: '768px', lg: '1024px' },
+  '@media (max-width: 768px)': {
+    marginTop: '3rem'          // Mobile-specific top spacing
+  }
 }}
 ```
 
@@ -470,6 +511,118 @@ const searchFlights = async () => {
   }
 };
 ```
+
+## Responsive Design Strategy
+
+### Custom Media Queries Implementation
+
+Unlike many applications that rely on Material-UI's breakpoint system, this project implements **custom CSS media queries** for more precise control over responsive behavior at the 768px breakpoint:
+
+#### 1. Strategic Breakpoint Selection
+
+```typescript
+// Strategic 768px breakpoint for mobile/desktop distinction
+const RESPONSIVE_BREAKPOINT = '768px';
+
+// Custom media query implementation
+'@media (max-width: 768px)': {
+  // Mobile-specific styles
+}
+```
+
+#### 2. Grid System Transformation
+
+**Desktop Layout (>768px)**:
+
+```typescript
+// Four-column grid for desktop
+sx={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(4, 1fr)',
+  gap: '16px'
+}}
+```
+
+**Mobile Layout (≤768px)**:
+
+```typescript
+// Single-column layout for mobile readability
+'@media (max-width: 768px)': {
+  gridTemplateColumns: '1fr'
+}
+```
+
+#### 3. Card Layout Transformation
+
+**RecommendedFlightCard Mobile Optimization**:
+
+```typescript
+// Desktop: Vertical card layout
+const desktopCardLayout = {
+  display: 'block',
+  flexDirection: 'column'
+};
+
+// Mobile: Horizontal card layout
+'@media (max-width: 768px)': {
+  display: 'flex',
+  flexDirection: 'row',
+  height: 'auto'
+}
+```
+
+**Image Responsive Sizing**:
+
+```typescript
+// Desktop: Full-width image
+sx={{
+  width: 'calc(100% - 16px)',
+  height: '105px'
+}}
+
+// Mobile: 40% width for horizontal layout
+'@media (max-width: 768px)': {
+  width: '40%',
+  height: '120px',
+  flexShrink: 0
+}
+```
+
+#### 4. Container Adaptive Behavior
+
+```typescript
+// Home page container responsive adaptation
+sx={{
+  maxWidth: { xs: '100%', sm: '768px', lg: '1024px' },
+  '@media (max-width: 768px)': {
+    marginTop: '3rem'  // Mobile-specific spacing
+  }
+}}
+```
+
+#### 5. Tools Section Responsive Layout
+
+```typescript
+// UsefulToolsSection mobile optimization
+sx={{
+  display: 'flex',
+  gap: 6,
+  height: '60dvh',
+  '@media (max-width: 768px)': {
+    flexDirection: 'row',  // Maintain horizontal layout
+    gap: 3,
+    height: '100%'         // Adaptive height
+  }
+}}
+```
+
+### Benefits of Custom Media Queries
+
+1. **Precise Control** - Exact 768px breakpoint matching design requirements
+2. **Performance** - No Material-UI breakpoint overhead
+3. **Consistency** - Uniform responsive behavior across components
+4. **Maintainability** - Clear, explicit responsive rules
+5. **Flexibility** - Easy customization without framework constraints
 
 ## API Integration & Hardcoded Data
 
@@ -805,10 +958,12 @@ google-flight/
 
 ### 6. **Responsive Design**
 
-- Mobile-first approach
-- Tablet and desktop optimizations
-- Touch-friendly interactions
-- Accessibility considerations
+- **Custom media queries** at 768px breakpoint for precise mobile control
+- **Mobile-first approach** with horizontal card layouts for small screens
+- **Flexible grid systems** that collapse from 4 columns to 1 column on mobile
+- **Touch-friendly interactions** with optimized spacing and sizing
+- **Accessibility considerations** with proper focus states and contrast ratios
+- **Container responsive behavior** with adaptive margins and padding
 
 ## Development & Build
 
@@ -876,9 +1031,27 @@ The application showcases:
 
 - **Modern React patterns** with hooks and functional components
 - **Type safety** with comprehensive TypeScript implementation
-- **Design system consistency** through Material-UI theming
+- **Custom responsive design** using precise media queries at 768px breakpoint
 - **Performance optimization** with code splitting and lazy loading
-- **User experience** focused on responsiveness and accessibility
+- **User experience** focused on mobile-first responsive layouts
 - **Maintainable architecture** following SOLID principles
+- **Advanced CSS Grid** implementation for responsive layouts
+- **Horizontal card layouts** optimized for mobile consumption
 
-The hybrid data approach (mock + real API) ensures the application can demonstrate full functionality while remaining cost-effective for development and demonstration purposes.
+### Key Responsive Design Achievements
+
+- **Seamless mobile experience** with horizontal card layouts
+- **Grid transformation** from 4 columns (desktop) to 1 column (mobile)
+- **Adaptive image sizing** with proportional width adjustments
+- **Container responsive behavior** with mobile-specific spacing
+- **Custom media queries** providing precise control over breakpoints
+
+The hybrid data approach (mock + real API) combined with sophisticated responsive design ensures the application can demonstrate full functionality across all device types while remaining cost-effective for development and demonstration purposes.
+
+### Technical Highlights
+
+- **Custom breakpoint strategy** at 768px for optimal mobile/desktop distinction
+- **CSS Grid mastery** with responsive column configurations
+- **Material-UI enhancement** with custom media query integration
+- **Performance-conscious** responsive implementation without framework overhead
+- **Accessibility-focused** touch-friendly mobile interactions
